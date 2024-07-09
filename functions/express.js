@@ -38,16 +38,9 @@ app.post('/', (req, res) => {
 
 // Export the Express.js app as the Netlify Functions handler
 exports.handler = async (event) => {
-  try {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Function executed successfully' }),
-    };
-  } catch (error) {
-    console.error('Error in Netlify Functions handler:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'An error occurred while executing the function' }),
-    };
-  }
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ message: 'Function executed successfully' }),
+  };
 };
+
