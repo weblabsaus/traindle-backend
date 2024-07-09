@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crowd Trainer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <style>
+        .message-box {
+            height: 400px;
+            overflow-y: auto;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .message.is-user {
+            background-color: #f2f2f2;
+            padding: 10px;
+            border-radius: 10px;
+            align-self: flex-end;
+        }
+        .message.is-ai {
+            background-color: #e6f2ff;
+            padding: 10px;
+            border-radius: 10px;
+            align-self: flex-start;
+        }
+    </style>
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Crowd Trainer</h1>
+            <div class="columns">
+                <div class="column is-half">
+                    <div class="box">
+                        <h2 class="subtitle">Chat with AI</h2>
+                        <div class="message-box" id="chatMessages">
+                            <!-- Messages will be dynamically added here -->
+                        </div>
+                        <div class="field has-addons">
+                            <div class="control is-expanded">
+                                <input class="input" type="text" id="chatInput" placeholder="Type your message...">
+                            </div>
+                            <div class="control">
+                                <button class="button is-primary" onclick="sendMessage()">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-half">
+                    <div class="box">
+                        <h2 class="subtitle">Train AI</h2>
+                        <div class="field">
+                            <label class="label">Question</label>
+                            <div class="control">
+                                <input class="input" type="text" id="trainInputQ" placeholder="Enter a question...">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Answer</label>
+                            <div class="control">
+                                <textarea class="textarea" id="trainInputA" rows="3" placeholder="Enter the answer..."></textarea>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-primary" onclick="trainAI()">Train</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const backendUrl = 'https://weblabsaus.github.io/traindle-backend';
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const messageBox = document.getElementById('chatMessages');
+            if (input.value.trim() !== '') {
+                const userMessage = document.createElement('div');
+                userMessage.classList.add('message', 'is-user');
+                userMessage.textContent = input.value;
+                messageBox.appendChild(userMessage);
+
+                try {
+                    const response = await fetch(`${backendUrl}/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: input.value }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+                    const aiMessage = 
+                    const aiMessage = document.createElement('div');
+                    aiMessage.classList.add('message', 'is-ai');
+                    aiMessage.textContent = data.response;
+                    messageBox.appendChild(aiMessage);
+                    input.value = '';
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Sorry, there was an error sending your message. Please try again later.');
+                }
+            }
+        }
+
+        async function trainAI() {
+            const questionInput = document.getElementById('trainInputQ');
+            const answerInput = document.getElementById('trainInputA');
+            const question = questionInput.value.trim();
+            const answer = answerInput.value.trim();
+
+            if (question !== '' && answer !== '') {
+                try {
+                    const response = await fetch(`${backendUrl}/train`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ question, answer }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+                    alert(`Training successful! The AI has learned the new response: "${data.response}"`);
+                    questionInput.value = '';
+                    answerInput.value = '';
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Sorry, there was an error training the AI. Please try again later.');
+                }
+            } else {
+                alert('Please enter a question and answer to train the AI.');
+            }
+        }
+    </script>
+</body>
+</html>
