@@ -1,15 +1,18 @@
 {
-  "name": "your-project-name",
+  "name": "traindle-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "netlify-lambda serve functions",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "npm install",
+    "build": "npm run build --prefix functions",
+    "start": "npm run start --prefix functions"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.2"
   }
 }
