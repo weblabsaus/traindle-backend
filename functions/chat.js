@@ -37,6 +37,4 @@ app.post('/train', (req, res) => {
     res.json({ response: answer });
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+module.exports = app;
